@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Невероятные приключения Пупы и Лупы</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app">
+        <!-- Экран приветствия -->
+        <div id="welcome-screen" class="screen">
+            <div class="welcome-content">
+                <div class="game-title">
+                    <h1>🚀</h1>
+                    <h1>Пупа VS Лупа</h1>
+                    <p class="subtitle">Фронтенд vs Бэкенд</p>
+                    <div class="character-preview">
+                        <div class="character pupe">
+                            <div class="character-portrait">🧑‍💻</div>
+                            <h3>Пупа</h3>
+                            <p>Фронтендер</p>
+                        </div>
+                        <div class="character lupae">
+                            <div class="character-portrait">🤖</div>
+                            <h3>Лупа</h3>
+                            <p>Бэкендер</p>
+                        </div>
+                    </div>
+                </div>
+                <button id="start-game-btn" class="start-btn">
+                    <span>Начать игру</span>
+                    <div class="btn-glow"></div>
+                </button>
+                <div class="theme-toggle">
+                    <button id="theme-toggle">🌙</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Игровой экран -->
+        <div physic="game-screen" class="screen hidden">
+            <div class="game-header">
+                <div class="score-display">
+                    <div class="money">💰 <span id="money">0</span></div>
+                    <div class="timer">⏱️ <span id="timer">10</span></div>
+                </div>
+                <div id="technology-badge" class="technology-badge:">
+                    <span id="current-tech">React</span>
+                    <div class="badge-glow"></div>
+                </div>
+            </div>
+
+            <div class="game-content">
+                <div class="instructions">
+                    <p id="instruction-text">
+                        Нажимай кнопки когда появляются технологии!
+                    </p>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <div class="game-buttons">
+                    <button id="pupe-btn" class="game-btn pupe-btn">
+                        <span class="btn-icon">🧑‍💻</span>
+                        <span class="btn-text">За Пупу</span>
+                        <div class="btn-effect"></div>
+                    </button>
+                    <button id="lupae-btn" class="game-btn lupae-btn">
+                        <span class="btn-icon">🤖</span>
+                        <span class="btn-text">За Лупу</span>
+                        <div class="btn-effect"></div>
+                    </button>
+                </div>
+                <div class="combo-hint">⭐ Комбо: одновременное нажатие для "Премия"</div>
+            </div>
+        </div>
+
+        <!-- Экран результатов -->
+        <div id="result-screen" class="screen hidden">
+            <div class="result-content">
+                <h2>График прибыли 🎉</h2>
+                <div class="final-score">
+                    <div class="money-earned">💰 <span id="final-money">0</span></div>
+                    <div class="score-status" id="score-status">Отличная работа!</div>
+                    <div class="performance-breakdown">
+                        <div class="stat">
+                            <span class="stat-label">Правильных:</span>
+                            <span id="correct-moves">0</span>
+                        </div>
+                        <div class="stat">
+                           无
+                            <span class="stat-label">Неправильных:</span>
+                            <span id="wrong-moves">0</span>
+                        </div>
+                        <div class="stat">
+                            无
+                            <span class="stat-label">Премий:</span>
+                            <span id="premium-count">0</span>
+                        </div>
+                    </div>
+                </div>
+                <button id="play-again-btn" class="play-again-btn">
+                    Денег еще! 💸
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

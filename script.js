@@ -29,6 +29,14 @@ class PupeLupaeGame {
         // Режим вызова
         this.challengeMode = false;
         this.spoiledMoves = false;
+        
+        // НАРКОМАНСКИЙ РЕЖИМ !!!
+        this.narcoticsMode = {
+            enabled: false,
+            intensity: 1,
+            chaosLevel: 0,
+            backgroundColor: ['#000000', '#1a0033', '#003319', '#330000', '#001a33']
+        };
         this.timer = null;
         this.techTimer = null;
         this.money = 0;
@@ -127,6 +135,22 @@ class PupeLupaeGame {
         
         document.getElementById('sound-toggle').addEventListener('click', () => {
             this.toggleSound();
+        });
+        
+        // МАГИЧЕСКОЕ АКТИВИРОВАНИЕ НАРКОМАНСКОГО РЕЖИМА!
+        // Пять последовательных кликов по кнопке секрет
+        let secretClickCount = 0;
+        document.getElementById('secret-mode').addEventListener('click', (e) => {
+            secretClickCount++;
+            if (secretClickCount >= 5) {
+                this.activateNarcoticsMode();
+                secretClickCount = 0;
+            }
+            
+            // Сброс счетчика через 3 секунды
+            setTimeout(() => {
+                secretClickCount = 0;
+            }, 3000);
         });
         
         // Улучшенное управление для мобильных устройств
@@ -435,9 +459,14 @@ class PupeLupaeGame {
         
         this.lastTapTime = now;
         
-        // Вибрация для лучшего отклика
+        // Вибрация для лучшего отклика + психоделика
         if (this.vibrateSupported) {
-            navigator.vibrate(50);
+            if (this.narcoticsMode.enabled) {
+                // Максимальная вибрация в психо режиме
+                navigator.vibrate([100, 50, 100, 50, 100]);
+            } else {
+                navigator.vibrate(50);
+            }
         }
         
         // Добавляем визуальный эффект кнопки
@@ -603,6 +632,62 @@ class PupeLupaeGame {
         }, 2000);
     }
     
+    activateNarcoticsMode() {
+        this.narcoticsMode.enabled = true;
+        this.narcoticsMode.intensity = 3;
+        this.narcoticsMode.chaosLevel = 100;
+        
+        // Меняем фон каждые 100ms для полного психоделика
+        const backgroundChaos = setInterval(() => {
+            if (!this.narcoticsMode.enabled) {
+                clearInterval(backgroundChaos);
+                return;
+            }
+            
+            const randomColor = this.narcoticsMode.backgroundColor[
+                Math.floor(Math.random() * this.narcoticsMode.backgroundColor.length)
+            ];
+            
+            document.body.style.backgroundColor = randomColor;
+            document.body.style.transform = `rotate(${Math.random() * 2 - 1}deg)`;
+            
+            // Добавляем хаос к элементам
+            const elements = document.querySelectorAll('.game-btn, .technology-badge, .start-btn');
+            elements.forEach(el => {
+                el.style.filter = `hue-rotate(${Math.random() * 360}deg) saturate(${2 + Math.random() * 3})`;
+                el.style.transform = `rotate(${(Math.random() - 0.5) * 10}deg) scale(${0.9 + Math.random() * 0.2})`;
+            });
+        }, 100);
+        
+        this.showFloatingMessage('💀 ПСИХО РЕЖИМ АКТИВИРОВАН! ОТКРЫТКА ПОШЛА! 💀', 'gold');
+        
+        // Принудительная вибрация для полного эффекта
+        navigator.vibrate([200, 100, 200, 100, 500]);
+        
+        // Деактивация через 30 секунд чтобы не сломать мозги игроку
+        setTimeout(() => {
+            this.deactivateNarcoticsMode();
+        }, 30000);
+    }
+    
+    deactivateNarcoticsMode() {
+        this.narcoticsMode.enabled = false;
+        this.narcoticsMode.intensity = 1;
+        this.narcoticsMode.chaosLevel = 0;
+        
+        // Возвращаем нормальный вид
+        document.body.style.backgroundColor = '';
+        document.body.style.transform = '';
+        
+        const elements = document.querySelectorAll('.game-btn, .technology-badge, .start-btn');
+        elements.forEach(el => {
+            el.style.filter = '';
+            el.style.transform = '';
+        });
+        
+        this.showFloatingMessage('🌈 Режим психоделик завершен! Добро пожаловать в реальность! 🌈', 'success');
+    }
+    
     updateMoneyDisplay() {
         document.getElementById('money').textContent = this.money;
         
@@ -616,13 +701,28 @@ class PupeLupaeGame {
     
     addButtonEffect(buttonType) {
         const button = document.getElementById(`${buttonType}-btn`);
-        button.style.transform = 'scale(0.95)';
-        button.style.boxShadow = 'inset 0 0 20px rgba(255,255,255,0.3)';
         
-        setTimeout(() => {
-            button.style.transform = '';
-            button.style.boxShadow = '';
-        }, 150);
+        if (this.narcoticsMode.enabled) {
+            // ПСИХО ЭФФЕКТЫ!
+            button.style.transform = `scale(${0.8 + Math.random() * 0.4}) rotate(${Math.random() * 40 - 20}deg)`;
+            button.style.filter = `hue-rotate(${Math.random() * 360}deg) saturate(${3 + Math.random() * 2})`;
+            button.style.boxShadow = `0 0 ${20 + Math.random() * 30}px rgba(${Math.random() * 255}, ${Math.random() * 255}, ${Math.random() * 255}, 0.8)`;
+            
+            setTimeout(() => {
+                button.style.transform = '';
+                button.style.filter = '';
+                button.style.boxShadow = '';
+            }, 200);
+        } else {
+            // Обычные эффекты
+            button.style.transform = 'scale(0.95)';
+            button.style.boxShadow = 'inset 0 0 20px rgba(255,255,255,0.3)';
+            
+            setTimeout(() => {
+                button.style.transform = '';
+                button.style.boxShadow = '';
+            }, 150);
+        }
     }
     
     showFloatingText(text, type) {

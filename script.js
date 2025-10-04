@@ -11,6 +11,24 @@ class PupeLupaeGame {
             maxInterval: 2200,   // максимум 2.2 секунды между технологиями
             startDelay: 1500     // задержка перед первой технологией
         };
+        
+        // Система комбо и мультипликаторов
+        this.combo = {
+            streak: 0,
+            multiplier: 1,
+            perfectStreak: 0,
+            maxMultiplier: 5,
+            comboTimer: null,
+            comboResetTime: 2000
+        };
+        
+        // Звуковые эффекты (эмуляция через вибрацию)
+        this.soundEnabled = true;
+        this.musicEnabled = false;
+        
+        // Режим вызова
+        this.challengeMode = false;
+        this.spoiledMoves = false;
         this.timer = null;
         this.techTimer = null;
         this.money = 0;
@@ -100,6 +118,15 @@ class PupeLupaeGame {
         // Кнопка снова играть
         document.getElementById('play-again-btn').addEventListener('click', () => {
             this.showWelcomeScreen();
+        });
+        
+        // Секретные кнопки
+        document.getElementById('secret-mode').addEventListener('click', () => {
+            this.toggleChallengeMode();
+        });
+        
+        document.getElementById('sound-toggle').addEventListener('click', () => {
+            this.toggleSound();
         });
         
         // Улучшенное управление для мобильных устройств
@@ -208,13 +235,21 @@ class PupeLupaeGame {
         document.getElementById('wrong-moves').textContent = this.wrongMoves;
         document.getElementById('premium-count').textContent = this.premiumCount;
         
-        // Определяем статус на основе результата
+        // Определяем статус на основе результата с учетом комбо
         let status = '';
-        if (this.money >= 15) status = '🌟 Невероятно! Вы настоящий маг!';
-        else if (this.money >= 10) status = '💯 Отличная реакция!';
+        const maxMultiplier = Math.max(1, this.combo.perfectStreak);
+        
+        if (this.money >= 25) status = '🌟 LEGENDARY! Комбо-мастер!';
+        else if (this.money >= 20) status = '🔥 ТАКСАС! Невероятные комбо!';
+        else if (this.money >= 15) status = '💯 Отличная реакция!';
+        else if (this.money >= 10) status = '⚡ Хорошая игра!';
         else if (this.money >= 5) status = '👍 Неплохо справляетесь!';
         else if (this.money >= 2) status = '🤔 Еще есть место для улучшения';
         else status = '😅 Бывает такое... Попробуйте еще раз!';
+        
+        // Добавляем информацию о комбо к статусу
+        if (maxMultiplier >= 5) status += ' + МАКСИ КОМБО!';
+        else if (maxMultiplier >= 3) status += ' | Отличные комбо!';
         
         document.getElementById('score-status').textContent = status;
         
@@ -410,7 +445,12 @@ class PupeLupaeGame {
     }
     
     correctMove(points, moveType = 'normal') {
-        this.money += points;
+        // Обновляем комбо
+        this.updateCombo();
+        
+        // Применяем мультипликатор к очкам
+        const finalPoints = Math.floor(points * this.combo.multiplier);
+        this.money += finalPoints;
         this.correctMoves++;
         
         if (moveType === 'premium') {
@@ -418,7 +458,11 @@ class PupeLupaeGame {
         }
         
         this.updateMoneyDisplay();
-        this.showFloatingText(`+${points}`, 'success');
+        this.updateComboDisplay();
+        
+        // Показываем флоативный текст с мультипликатором
+        const comboText = this.combo.multiplier > 1 ? `+${finalPoints} (x${this.combo.multiplier})` : `+${finalPoints}`;
+        this.showFloatingText(comboText, 'success');
         
         // Добавляем реакцию персонажа
         if (moveType === 'premium') {
@@ -431,13 +475,132 @@ class PupeLupaeGame {
     
     wrongMove() {
         this.wrongMoves++;
+        this.resetCombo(); // Сбрасываем комбо при ошибке
         this.money = Math.max(0, this.money - 2); // Штраф за неправильное нажатие
         
         this.updateMoneyDisplay();
+        this.updateComboDisplay();
         this.showFloatingText('-2', 'danger');
         
         // Показываем разочарование
         this.showCharacterReaction('disappointment');
+    }
+    
+    updateCombo() {
+        this.combo.streak++;
+        this.combo.perfectStreak = this.combo.streak;
+        
+        // Увеличиваем мультипликатор каждые 3 правильных хода
+        if (this.combo.streak % 3 === 0 && this.combo.multiplier < this.combo.maxMultiplier) {
+            this.combo.multiplier = Math.min(this.combo.maxMultiplier, Math.floor(this.combo.streak / 3) + 1);
+        }
+        
+        // Сбрасываем таймер комбо
+        if (this.combo.comboTimer) {
+            clearTimeout(this.combo.comboTimer);
+        }
+        this.combo.comboTimer = setTimeout(() => {
+            this.resetCombo();
+        }, this.combo.comboResetTime);
+    }
+    
+    resetCombo() {
+        this.combo.streak = 0;
+        this.combo.multiplier = 1;
+        this.combo.perfectStreak = 0;
+        if (this.combo.comboTimer) {
+            clearTimeout(this.combo.comboTimer);
+            this.combo.comboTimer = null;
+        }
+        this.updateComboDisplay();
+    }
+    
+    updateComboDisplay() {
+        const comboElement = document.getElementById('combo-text');
+        const comboBar = document.getElementById('combo-bar');
+        
+        if (this.combo.multiplier > 1) {
+            comboElement.textContent = `🔥 x${this.combo.multiplier}`;
+            comboElement.style.color = '#ff6b6b';
+            comboElement.style.textShadow = '0 0 15px rgba(255, 107, 107, 0.8)';
+            
+            // Обновляем прогресс бар 
+            const progress = (this.combo.streak % 3) / 3 * 100;
+            const barBefore = comboBar.cloneNode(true);
+            barBefore.style.width = `${progress}%`;
+            barBefore.style.display = 'block';
+            barBefore.style.height = '100%';
+            barBefore.style.background = 'linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb)';
+            barBefore.style.borderRadius = '2px';
+            barBefore.style.transition = 'width 0.3s ease';
+        } else {
+            comboElement.textContent = '🔥 x1';
+            comboElement.style.color = 'var(--warning-color)';
+            comboElement.style.textShadow = '0 0 10px rgba(245, 158, 11, 0.5)';
+        }
+    }
+    
+    toggleChallengeMode() {
+        this.challengeMode = !this.challengeMode;
+        
+        if (this.challengeMode) {
+            // Режим вызова: быстрая смена технологий
+            this.techSpeed.minInterval = 800;
+            this.techSpeed.maxInterval = 1400;
+            this.showFloatingMessage('💎 РЕЖИМ ВЫЗОВА АКТИВИРОВАН!', 'gold');
+            document.getElementById('secret-mode').style.boxShadow = '0 0 25px rgba(255, 215, 0, 0.8)';
+        } else {
+            // Обычный режим
+            this.techSpeed.minInterval = 1200;
+            this.techSpeed.maxInterval = 2200;
+            this.showFloatingMessage('💎 Обычный режим', 'info');
+            document.getElementById('secret-mode').style.boxShadow = '';
+        }
+    }
+    
+    toggleSound() {
+        this.soundEnabled = !this.soundEnabled;
+        
+        if (this.soundEnabled) {
+            document.getElementById('sound-toggle').textContent = '🔊';
+            document.getElementById('sound-toggle').style.boxShadow = '0 0 20px rgba(76, 175, 80, 0.5)';
+            this.showFloatingMessage('🔊 Звук включен', 'success');
+        } else {
+            document.getElementById('sound-toggle').textContent = '🔇';
+            document.getElementById('sound-toggle').style.boxShadow = '';
+            this.showFloatingMessage('🔇 Звук выключен', 'info');
+        }
+    }
+    
+    showFloatingMessage(text, type = 'info') {
+        const colors = {
+            'success': '#4CAF50',
+            'info': '#2196F3', 
+            'warning': '#FF9800',
+            'gold': '#FFD700'
+        };
+        
+        const floatingMsg = document.createElement('div');
+        floatingMsg.textContent = text;
+        floatingMsg.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: ${colors[type]};
+            font-size: 1.5rem;
+            font-weight: 900;
+            pointer-events: none;
+            z-index: 1000;
+            text-shadow: 0 0 15px rgba(0,0,0,0.8);
+            animation: floatUp 2s ease-out forwards;
+        `;
+        
+        document.body.appendChild(floatingMsg);
+        
+        setTimeout(() => {
+            floatingMsg.remove();
+        }, 2000);
     }
     
     updateMoneyDisplay() {

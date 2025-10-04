@@ -207,6 +207,37 @@ body {
     transform: rotate(90deg);
 }
 
+.secret-btn, .sound-btn {
+    background: var(--card-bg);
+    border: 2px solid rgba(255, 215, 0, 0.5);
+    color: #ffd700;
+    font-size: 1.2rem;
+    padding: 0.8rem;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 5px;
+}
+
+.secret-btn:hover {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #000;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.sound-btn:hover {
+    background: linear-gradient(135deg, #4CAF50, #8bc34a);
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+}
+
 /* Игровой экран */
 .game-header {
     width: 100%;
@@ -220,6 +251,41 @@ body {
     margin-bottom: 1rem;
     font-size: 1.2rem;
     font-weight: 700;
+    align-items: center;
+}
+
+.combo-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+#combo-text {
+    font-size: 1rem;
+    color: var(--warning-color);
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+    transition: all 0.3s ease;
+}
+
+#combo-bar {
+    width: 60px;
+    height: 4px;
+    background: rgba(245, 158, 11, 0.3);
+    border-radius: 2px;
+    margin-top: 4px;
+    overflow: hidden;
+}
+
+#combo-bar::before {
+    content: '';
+    display: block;
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 2px;
 }
 
 .money {

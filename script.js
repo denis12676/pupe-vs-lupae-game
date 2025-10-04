@@ -4,6 +4,13 @@ class PupeLupaeGame {
         this.currentScreen = 'welcome';
         this.gameActive = false;
         this.gameDuration = 10000; // 10 секунд
+        
+        // Настройки скорости игры
+        this.techSpeed = {
+            minInterval: 1200,    // минимум 1.2 секунды между технологиями
+            maxInterval: 2200,   // максимум 2.2 секунды между технологиями
+            startDelay: 1500     // задержка перед первой технологией
+        };
         this.timer = null;
         this.techTimer = null;
         this.money = 0;
@@ -271,13 +278,13 @@ class PupeLupaeGame {
             
             this.displayTech(tech, techCategory);
             
-            // Случайный интервал между технологиями (650ms - 1200ms)
-            const nextInterval = 650 + Math.random() * 550;
+            // Случайный интервал между технологиями
+            const nextInterval = this.techSpeed.minInterval + Math.random() * (this.techSpeed.maxInterval - this.techSpeed.minInterval);
             setTimeout(techInterval, nextInterval);
         };
         
         // Первая технология появляется через небольшую задержку
-        setTimeout(techInterval, 800);
+        setTimeout(techInterval, this.techSpeed.startDelay);
     }
     
     getRandomTech(type) {
@@ -316,7 +323,7 @@ class PupeLupaeGame {
         if (category === 'premium') {
             document.getElementById('instruction-text').textContent = '⚡ ПРЕМИЯ! Нажимайте ОБА одновременно!';
             document.getElementById('instruction-text').style.color = 'var(--warning-color)';
-            document.getElementById('instruction-text').style.animation = 'pulse 0.5s ease-in-out infinite';
+            document.getElementById('instruction-text').style.animation = 'pulse 1s ease-in-out infinite';
         } else {
             const target = category === 'frontend' ? 'Пупу' : 'Лупу';
             document.getElementById('instruction-text').textContent = `Тапните "За ${target}"!`;

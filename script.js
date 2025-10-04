@@ -459,18 +459,18 @@ class PupeLupaeGame {
         const color = type === 'success' ? 'var(--success-color)' : 'var(--danger-color)';
         const floatingText = document.createElement('div');
         floatingText.textContent = text;
-        floatingText.style.cssText = \`
+        floatingText.style.cssText = `
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%%, -50%%);
+            transform: translate(-50%, -50%);
             color: ${color};
             font-size: 2rem;
             font-weight: 900;
             pointer-events: none;
             z-index: 1000;
             animation: floatUp 1s ease-out forwards;
-        \`;
+        `;
         
         document.body.appendChild(floatingText);
         
@@ -526,11 +526,11 @@ class PupeLupaeGame {
     
     showAchievement(title, description) {
         const achievement = document.createElement('div');
-        achievement.style.cssText = \`
+        achievement.style.cssText = `
             position: fixed;
             top: 20px;
-            left: 50%%;
-            transform: translateX(-50%%);
+            left: 50%;
+            transform: translateX(-50%);
             background: linear-gradient(135deg, #ffd700, #ffed4e);
             color: #000;
             padding: 1rem 2rem;
@@ -539,12 +539,12 @@ class PupeLupaeGame {
             z-index: 1001;
             animation: slideInDown 0.5s ease-out, slideOutUp 0.5s ease-in 3s forwards;
             box-shadow: 0 20px 25px -5px rgba(255, 215, 0, 0.4);
-        \`;
+        `;
         
-        achievement.innerHTML = \`
+        achievement.innerHTML = `
             <div style="font-size: 1.2rem;">${title}</div>
             <div style="font-size: 0.9rem; opacity: 0.8;">${description}</div>
-        \`;
+        `;
         
         document.body.appendChild(achievement);
         
@@ -580,27 +580,27 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Добавляем глобальные стили для анимаций
     const style = document.createElement('style');
-    style.textContent = \`
+    style.textContent = `
         @keyframes floatUp {
-            0%% { opacity: 1; transform: translate(-50%%, -50%%) scale(1); }
-            100%% { opacity: 0; transform: translate(-50%%, -150%%) scale(1.2); }
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -150%) scale(1.2); }
         }
         
         @keyframes slideInDown {
-            from { transform: translateX(-50%%) translateY(-100%%); opacity: 0; }
-            to { transform: translateX(-50%%) translateY(0); opacity: 1; }
+            from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
         
         @keyframes slideOutUp {
-            from { transform: translateX(-50%%) translateY(0); opacity: 1; }
-            to { transform: translateX(-50%%) translateY(-100%%); opacity: 0; }
+            from { transform: translateX(-50%) translateY(0); opacity: 1; }
+            to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
         }
         
         .touching {
             transform: scale(0.95) !important;
             box-shadow: inset 0 4px 8px rgba(0,0,0,0.2) !important;
         }
-    \`;
+    `;
     document.head.appendChild(style);
 });
 

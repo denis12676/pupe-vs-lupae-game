@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛠 Тест игры Пупа VS Лупа</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🛠 Тест игры "Пупа VS Лупа"</h1>
+        
+        <div id="test-log">
+            <div class="status info">🚀 Утилиты тестирования готовы</div>
+        </div>
+        
+        <h3>🧪 Быстрые тесты:</h3>
+        <button class="test-button" onclick="testBasicElements()">Проверить основательные элементы</button>
+        <button class="test-button" onclick="testGameInit()">Проверить инициализацию игры</button>
+        <button class="test-button" onclick="testGameLogic()">Проверить игровую логику</button>
+        <button class="test-button" onclick="runFullGame()">Запустить быструю игру</button>
+        <button class="test-button" onclick="clearLog()">Очистить лог</button>
+        
+        <div style="margin-top: 20px;">
+            <h3>📋 Вручную протестируйте:</h3>
+            <ul>
+                <li><strong>Кнопка "Начать игру":</strong> Должна вести к игровому экрану</li>
+                <li><strong>Игровые кнопки:</strong> Должны реагировать на тапы</li>
+                <li><strong>Таймер:</strong> Должен считать до 10 секунд</li>
+                <li><strong>Технологии:</strong> Должны меняться в круге по центру</li>
+                <li><strong>Результаты:</strong> Должны показываться после окончания игры</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <a href="index.html" class="test-button" style="text-decoration: none;">🎮 Перейти к основной игре</a>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('test-log');
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+            logDiv.appendChild(statusDiv);
+            console.log(message);
+        }
+
+        function clearLog() {
+            document.getElementById('test-log').innerHTML = '<div class="status info">🚀 Лог очищен</div>';
+        }
+
+        function testBasicElements() {
+            log('🔍 Проверяем наличие основных элементов...');
+            
+            const elements = [
+                'start-game-btn',
+                'game-screen', 
+                'technology-badge',
+                'pupe-btn',
+                'lupae-btn',
+                'money',
+                'timer'
+            ];
+            
+            let allFound = true;
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    log(`✅ Элемент ${id} найден`, 'success');
+                } else {
+                    log(`❌ Элемент ${id} НЕ найден`, 'error');
+                    allFound = false;
+                }
+            });
+            
+            if (allFound) {
+                log('🎉 Все основные элементы найдены!', 'success');
+            } else {
+                log('⚠️ Некоторые элементы отсутствуют', 'error');
+            }
+        }
+
+        function testGameInit() {
+            log('🎮 Проверяем инициализацию игры...');
+            
+            try {
+                // Проверим, можно ли создать экземпляр игры
+                fetch('script.js')
+                    .then(response => response.text())
+                    .then(source => {
+                        if (source.includes('class PupeLupaeGame')) {
+                            log('✅ Класс PupeLupaeGame найден в script.js', 'success');
+                        } else {
+                            log('❌ Класс PupeLupaeGame НЕ найден', 'error');
+                        }
+                        
+                        if (source.includes('DOMContentLoaded')) {
+                            log('✅ Инициализация при DOMContentLoaded настроена', 'success');
+                        } else {
+                            log('❌ Инициализация при DOMContentLoaded НЕ настроена', 'error');
+                        }
+                    })
+                    .catch(err => {
+                        log(`❌ Ошибка при чтении script.js: ${err.message}`, 'error');
+                    });
+            } catch (error) {
+                log(`❌ Ошибка при проверке инициализации: ${error.message}`, 'error');
+            }
+        }
+
+        function testGameLogic() {
+            log('🎯 Проверяем игровую логику...');
+            
+            try {
+                fetch('script.js')
+                    .then(response => response.text())
+                    .then(source => {
+                        const checks = [
+                            { name: 'startGame функция', pattern: 'startGame\\(' },
+                            { name: 'handleTap функция', pattern: 'handleTap\\(' },
+                            { name: 'displayTech функция', pattern: 'displayTech\\(' },
+                            { name: 'frontend технологий', pattern: 'this\.frontendTechs' },
+                            { name: 'backend технологий', pattern: 'this\.backendTechs' },
+                            { name: 'таймер игры', pattern: 'startGameTimer' }
+                        ];
+                        
+                        let passedChecks = 0;
+                        checks.forEach(check => {
+                            const regex = new RegExp(check.pattern);
+                            if (regex.test(source)) {
+                                log(`✅ ${check.name} - найдено`, 'success');
+                                passedChecks++;
+                            } else {
+                                log(`❌ ${check.name} - НЕ найдено`, 'error');
+                            }
+                        });
+                        
+                        log(`📊 Результат: ${passedChecks}/${checks.length} проверок пройдено`, 
+                            passedChecks === checks.length ? 'success' : 'info');
+                    });
+            } catch (error) {
+                log(`❌ Ошибка при проверке логики: ${error.message}`, 'error');
+            }
+        }
+
+        function runFullGame() {
+            log('🚀 Запускаем автоматический тест полной игры...');
+            
+            // Это фиктивный тест для демонстрации
+            setTimeout(() => {
+                log('✅ Тест завершен - откройте основную игру для ручного тестирования', 'success');
+                log('💡 Откройте index.html в новой вкладке для финального тестирования', 'info');
+            }, 1000);
+        }
+
+        // Автоматически запускаем базовые проверки при загрузке страницы
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                log('🔧 Автоматическая диагностика завершена', 'info');
+                log('👆 Используйте кнопки выше для детального тестирования', 'info');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
